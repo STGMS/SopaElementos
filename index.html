@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sopa de Letras - Elementos Químicos Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: #f4f7fa;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            overflow-x: auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 600;
+        }
+
+        .game-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            justify-content: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-width: 140px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.85em;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select, button {
+            padding: 10px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            width: 100%;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        select:focus, button:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #2563eb;
+        }
+
+        button:active {
+            background: #1d4ed8;
+        }
+
+        .game-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .info-card {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
+            min-width: 140px;
+            transition: transform 0.2s;
+        }
+
+        .info-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .info-card h3 {
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 1.6em;
+            font-weight: 700;
+        }
+
+        .timer { color: #ef4444; }
+        .score { color: #22c55e; }
+
+        .game-area {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .grid-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
+        }
+
+        .word-grid {
+            display: grid;
+            gap: 4px;
+            margin: 0 auto;
+        }
+
+        .cell {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #d1d5db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 4px;
+            transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+        }
+
+        .cell:hover {
+            background: #f3f4f6;
+            transform: scale(1.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .cell.selected {
+            background: #3b82f6;
+            color: white;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .cell.found {
+            background: #22c55e;
+            color: white;
+            border-color: #16a34a;
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+        }
+
+        .elements-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 350px;
+            min-width: 300px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
+        }
+
+        .elements-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #4a5568;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .element-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #f9fafb;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+
+        .element-item:hover {
+            background: #f3f4f6;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .element-item.found {
+            background: #dcfce7;
+            text-decoration: line-through;
+            opacity: 0.85;
+        }
+
+        .element-display {
+            background: #3b82f6;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 1.1em;
+            min-width: 50px;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .stats-panel {
+            margin-top: 30px;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .stats-title {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #374151;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 12px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .game-over {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .game-over-content {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e0e0e0;
+        }
+
+        .game-over h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 2.2em;
+            font-weight: 600;
+        }
+
+        .final-stats {
+            margin: 20px 0;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            h1 { font-size: 1.8em; }
+            .cell { 
+                width: 30px; 
+                height: 30px; 
+                font-size: 14px; 
+            }
+            .game-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .game-area {
+                flex-direction: column;
+                align-items: center;
+            }
+            .elements-panel {
+                max-width: 100%;
+                min-width: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cell { 
+                width: 26px; 
+                height: 26px; 
+                font-size: 12px; 
+            }
+            .game-info {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <h1>🧪 Sopa de Letras - Elementos Químicos Pro 🧪</h1>
+        
+        <div class="game-controls">
+            <div class="control-group">
+                <label for="difficulty">Dificultad:</label>
+                <select id="difficulty">
+                    <option value="easy">🟢 Fácil</option>
+                    <option value="medium">🟡 Medio</option>
+                    <option value="hard">🔴 Difícil</option>
+                    <option value="expert">⚫ Experto</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label for="gridSize">Tamaño:</label>
+                <select id="gridSize">
+                    <option value="8">8x8</option>
+                    <option value="10">10x10</option>
+                    <option value="12">12x12</option>
+                    <option value="15">15x15</option>
+                    <option value="18">18x18</option>
+                    <option value="20">20x20</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <button id="startGame">🎮 Nuevo Juego</button>
+            </div>
+            
+            <div class="control-group">
+                <button id="pauseGame">⏸️ Pausar</button>
+            </div>
+        </div>
+
+        <div class="game-info">
+            <div class="info-card">
+                <h3>⏱️ Tiempo</h3>
+                <div id="timer" class="info-value timer">0:00</div>
+            </div>
+            
+            <div class="info-card">
+                <h3>🏆 Puntuación</h3>
+                <div id="score" class="info-value score">0</div>
+            </div>
+            
+        </div>
+
+        <div class="game-area">
+            <div class="grid-container">
+                <div id="wordGrid" class="word-grid"></div>
+            </div>
+            
+            <div class="elements-panel">
+                <div class="elements-title">🎯 Elementos a encontrar (Números Atómicos):</div>
+                <div id="elementsList"></div>
+            </div>
+        </div>
+        
+        <div class="stats-panel" id="statsPanel" style="display: none;">
+            <div class="stats-title">📈 Estadísticas de la Partida</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div style="font-weight: bold; color: #2d5016;">Tiempo Total</div>
+                    <div id="totalTime">0:00</div>
+                </div>
+                <div class="stat-item">
+                    <div style="font-weight: bold; color: #2d5016;">Precisión</div>
+                    <div id="accuracy">100%</div>
+                </div>
+                <div class="stat-item">
+                    <div style="font-weight: bold; color: #2d5016;">Velocidad</div>
+                    <div id="speed">0/min</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="gameOver" class="game-over">
+        <div class="game-over-content">
+            <h2 id="gameOverTitle">🎉 ¡Felicidades!</h2>
+            <div class="final-stats">
+                <div id="finalScore" style="font-size: 2em; color: #38a169; margin-bottom: 10px;">Puntuación: 0</div>
+                <div id="gameOverStats" style="color: #4a5568;"></div>
+            </div>
+            <button id="playAgain">🎮 Jugar de Nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        class ChemicalWordSearchPro {
+            constructor() {
+                this.grid = [];
+                this.elements = [];
+                this.foundElements = new Set();
+                this.selectedCells = [];
+                this.isSelecting = false;
+                this.gameStarted = false;
+                this.gamePaused = false;
+                this.timer = null;
+                this.elapsedTime = 0;
+                this.timeLimit = 0;
+                this.score = 0;
+                this.attempts = 0;
+                this.correctAttempts = 0;
+                this.startTime = null;
+                this.placedWords = [];
+                
+                // Elementos químicos expandidos con más información
+                this.chemicalElements = [
+                    { name: 'HIDROGENO', symbol: 'H', atomic: 1 },
+                    { name: 'HELIO', symbol: 'He', atomic: 2 },
+                    { name: 'LITIO', symbol: 'Li', atomic: 3 },
+                    { name: 'BERILIO', symbol: 'Be', atomic: 4 },
+                    { name: 'BORO', symbol: 'B', atomic: 5 },
+                    { name: 'CARBONO', symbol: 'C', atomic: 6 },
+                    { name: 'NITROGENO', symbol: 'N', atomic: 7 },
+                    { name: 'OXIGENO', symbol: 'O', atomic: 8 },
+                    { name: 'FLUOR', symbol: 'F', atomic: 9 },
+                    { name: 'NEON', symbol: 'Ne', atomic: 10 },
+                    { name: 'SODIO', symbol: 'Na', atomic: 11 },
+                    { name: 'MAGNESIO', symbol: 'Mg', atomic: 12 },
+                    { name: 'ALUMINIO', symbol: 'Al', atomic: 13 },
+                    { name: 'SILICIO', symbol: 'Si', atomic: 14 },
+                    { name: 'FOSFORO', symbol: 'P', atomic: 15 },
+                    { name: 'AZUFRE', symbol: 'S', atomic: 16 },
+                    { name: 'CLORO', symbol: 'Cl', atomic: 17 },
+                    { name: 'ARGON', symbol: 'Ar', atomic: 18 },
+                    { name: 'POTASIO', symbol: 'K', atomic: 19 },
+                    { name: 'CALCIO', symbol: 'Ca', atomic: 20 },
+                    { name: 'HIERRO', symbol: 'Fe', atomic: 26 },
+                    { name: 'COBRE', symbol: 'Cu', atomic: 29 },
+                    { name: 'ZINC', symbol: 'Zn', atomic: 30 },
+                    { name: 'PLATA', symbol: 'Ag', atomic: 47 },
+                    { name: 'ESTAÑO', symbol: 'Sn', atomic: 50 },
+                    { name: 'ORO', symbol: 'Au', atomic: 79 },
+                    { name: 'MERCURIO', symbol: 'Hg', atomic: 80 },
+                    { name: 'PLOMO', symbol: 'Pb', atomic: 82 },
+                    { name: 'RADIO', symbol: 'Ra', atomic: 88 },
+                    { name: 'URANIO', symbol: 'U', atomic: 92 }
+                ];
+                
+                this.initializeEventListeners();
+            }
+
+            initializeEventListeners() {
+                document.getElementById('startGame').addEventListener('click', () => this.startNewGame());
+                document.getElementById('pauseGame').addEventListener('click', () => this.togglePause());
+                document.getElementById('playAgain').addEventListener('click', () => {
+                    document.getElementById('gameOver').style.display = 'none';
+                    this.startNewGame();
+                });
+            }
+
+            startNewGame() {
+                const difficulty = document.getElementById('difficulty').value;
+                const gridSize = parseInt(document.getElementById('gridSize').value);
+                
+                this.resetGame();
+                this.setupGame(difficulty, gridSize);
+                this.createGrid();
+                this.displayElements();
+                this.startTimer();
+                document.getElementById('statsPanel').style.display = 'none';
+            }
+
+            resetGame() {
+                this.foundElements.clear();
+                this.selectedCells = [];
+                this.score = 0;
+                this.gameStarted = true;
+                this.gamePaused = false;
+                this.attempts = 0;
+                this.correctAttempts = 0;
+                this.placedWords = [];
+                this.elapsedTime = 0;
+                
+                if (this.timer) {
+                    clearInterval(this.timer);
+                }
+                
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('gameOver').style.display = 'none';
+                document.getElementById('pauseGame').textContent = '⏸️ Pausar';
+            }
+
+            setupGame(difficulty, gridSize) {
+                let elementCount, multiplier = 1;
+                
+                switch (difficulty) {
+                    case 'easy':
+                        elementCount = Math.max(3, Math.floor(gridSize * gridSize / 30));
+                        multiplier = 1;
+                        break;
+                    case 'medium':
+                        elementCount = Math.max(5, Math.floor(gridSize * gridSize / 25));
+                        multiplier = 1.2;
+                        break;
+                    case 'hard':
+                        elementCount = Math.max(7, Math.floor(gridSize * gridSize / 20));
+                        multiplier = 1.5;
+                        break;
+                    case 'expert':
+                        elementCount = Math.max(10, Math.floor(gridSize * gridSize / 15));
+                        multiplier = 2;
+                        break;
+                }
+                
+                this.scoreMultiplier = multiplier;
+                this.gridSize = gridSize;
+                this.timeLimit = 0;
+                this.displayMode = 'atomic';
+                
+                // Seleccionar elementos aleatorios sin repetir
+                const shuffled = [...this.chemicalElements].sort(() => 0.5 - Math.random());
+                this.elements = shuffled.slice(0, Math.min(elementCount, this.chemicalElements.length));
+                
+                this.grid = Array(gridSize).fill().map(() => Array(gridSize).fill(''));
+                this.placeWords();
+                this.fillEmptyCells();
+            }
+
+            placeWords() {
+                const directions = [
+                    [0, 1],   // horizontal
+                    [1, 0],   // vertical
+                    [1, 1],   // diagonal descendente
+                    [1, -1],  // diagonal ascendente
+                    [0, -1],  // horizontal inversa
+                    [-1, 0],  // vertical inversa
+                    [-1, -1], // diagonal descendente inversa
+                    [-1, 1]   // diagonal ascendente inversa
+                ];
+
+                this.elements.forEach(element => {
+                    let placed = false;
+                    let attempts = 0;
+                    
+                    while (!placed && attempts < 150) {
+                        const direction = directions[Math.floor(Math.random() * directions.length)];
+                        const startRow = Math.floor(Math.random() * this.gridSize);
+                        const startCol = Math.floor(Math.random() * this.gridSize);
+                        
+                        if (this.canPlaceWord(element.name, startRow, startCol, direction)) {
+                            this.placeWord(element.name, startRow, startCol, direction);
+                            this.placedWords.push({
+                                word: element.name,
+                                startRow,
+                                startCol,
+                                direction,
+                                element
+                            });
+                            placed = true;
+                        }
+                        attempts++;
+                    }
+                });
+            }
+
+            canPlaceWord(word, startRow, startCol, direction) {
+                const [dRow, dCol] = direction;
+                
+                for (let i = 0; i < word.length; i++) {
+                    const row = startRow + i * dRow;
+                    const col = startCol + i * dCol;
+                    
+                    if (row < 0 || row >= this.gridSize || col < 0 || col >= this.gridSize) {
+                        return false;
+                    }
+                    
+                    if (this.grid[row][col] !== '' && this.grid[row][col] !== word[i]) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
+
+            placeWord(word, startRow, startCol, direction) {
+                const [dRow, dCol] = direction;
+                
+                for (let i = 0; i < word.length; i++) {
+                    const row = startRow + i * dRow;
+                    const col = startCol + i * dCol;
+                    this.grid[row][col] = word[i];
+                }
+            }
+
+            fillEmptyCells() {
+                const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                
+                for (let i = 0; i < this.gridSize; i++) {
+                    for (let j = 0; j < this.gridSize; j++) {
+                        if (this.grid[i][j] === '') {
+                            this.grid[i][j] = letters[Math.floor(Math.random() * letters.length)];
+                        }
+                    }
+                }
+            }
+
+            createGrid() {
+                const gridContainer = document.getElementById('wordGrid');
+                gridContainer.innerHTML = '';
+                gridContainer.style.gridTemplateColumns = `repeat(${this.gridSize}, 1fr)`;
+
+                for (let i = 0; i < this.gridSize; i++) {
+                    for (let j = 0; j < this.gridSize; j++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        cell.textContent = this.grid[i][j];
+                        cell.dataset.row = i;
+                        cell.dataset.col = j;
+                        
+                        cell.addEventListener('mousedown', (e) => this.startSelection(e));
+                        cell.addEventListener('mouseover', (e) => this.continueSelection(e));
+                        cell.addEventListener('mouseup', (e) => this.endSelection(e));
+                        
+                        // Touch events for mobile
+                        cell.addEventListener('touchstart', (e) => {
+                            e.preventDefault();
+                            this.startSelection(e);
+                        });
+                        cell.addEventListener('touchmove', (e) => {
+                            e.preventDefault();
+                            const touch = e.touches[0];
+                            const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                            if (element && element.classList.contains('cell')) {
+                                this.continueSelection({ target: element });
+                            }
+                        });
+                        cell.addEventListener('touchend', (e) => {
+                            e.preventDefault();
+                            this.endSelection(e);
+                        });
+                        
+                        gridContainer.appendChild(cell);
+                    }
+                }
+
+                document.addEventListener('mouseup', () => this.endSelection());
+                document.addEventListener('touchend', () => this.endSelection());
+            }
+
+            displayElements() {
+                const elementsList = document.getElementById('elementsList');
+                elementsList.innerHTML = '';
+                
+                this.elements.forEach((element, index) => {
+                    const elementDiv = document.createElement('div');
+                    elementDiv.className = 'element-item';
+                    
+                    let displayValue = '';
+                    
+                    switch (this.displayMode) {
+                        case 'symbol':
+                            displayValue = element.symbol;
+                            break;
+                        case 'atomic':
+                            displayValue = element.atomic;
+                            break;
+                        case 'mixed':
+                            displayValue = (index % 2 === 0) ? element.symbol : element.atomic;
+                            break;
+                    }
+                    
+                    elementDiv.innerHTML = `
+                        <div class="element-display">${displayValue}</div>
+                    `;
+                    elementDiv.dataset.elementName = element.name;
+                    elementsList.appendChild(elementDiv);
+                });
+            }
+
+            togglePause() {
+                if (!this.gameStarted) return;
+                
+                this.gamePaused = !this.gamePaused;
+                const pauseBtn = document.getElementById('pauseGame');
+                
+                if (this.gamePaused) {
+                    pauseBtn.textContent = '▶️ Reanudar';
+                    if (this.timer) {
+                        clearInterval(this.timer);
+                    }
+                } else {
+                    pauseBtn.textContent = '⏸️ Pausar';
+                    this.startTimer();
+                }
+            }
+
+            startSelection(e) {
+                if (!this.gameStarted || this.gamePaused) return;
+                
+                this.isSelecting = true;
+                this.selectedCells = [e.target];
+                e.target.classList.add('selected');
+                e.preventDefault();
+            }
+
+            continueSelection(e) {
+                if (!this.isSelecting || this.gamePaused) return;
+                
+                const cells = document.querySelectorAll('.cell');
+                cells.forEach(cell => {
+                    if (!cell.classList.contains('found')) {
+                        cell.classList.remove('selected');
+                    }
+                });
+                
+                const path = this.getSelectionPath(this.selectedCells[0], e.target);
+                path.forEach(cell => {
+                    if (!cell.classList.contains('found')) {
+                        cell.classList.add('selected');
+                    }
+                });
+                
+                this.selectedCells = path;
+            }
+
+            endSelection() {
+                if (!this.isSelecting || this.gamePaused) return;
+                
+                this.isSelecting = false;
+                this.attempts++;
+                this.checkWord();
+                
+                const cells = document.querySelectorAll('.cell');
+                cells.forEach(cell => {
+                    if (!cell.classList.contains('found')) {
+                        cell.classList.remove('selected');
+                    }
+                });
+                
+                this.selectedCells = [];
+            }
+
+            getSelectionPath(start, end) {
+                const startRow = parseInt(start.dataset.row);
+                const startCol = parseInt(start.dataset.col);
+                const endRow = parseInt(end.dataset.row);
+                const endCol = parseInt(end.dataset.col);
+                
+                const deltaRow = endRow - startRow;
+                const deltaCol = endCol - startCol;
+                
+                if (deltaRow === 0 || deltaCol === 0 || Math.abs(deltaRow) === Math.abs(deltaCol)) {
+                    const stepRow = deltaRow === 0 ? 0 : deltaRow / Math.abs(deltaRow);
+                    const stepCol = deltaCol === 0 ? 0 : deltaCol / Math.abs(deltaCol);
+                    
+                    const path = [];
+                    const steps = Math.max(Math.abs(deltaRow), Math.abs(deltaCol));
+                    
+                    for (let i = 0; i <= steps; i++) {
+                        const row = startRow + i * stepRow;
+                        const col = startCol + i * stepCol;
+                        const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                        if (cell) path.push(cell);
+                    }
+                    
+                    return path;
+                }
+                
+                return [start];
+            }
+
+            checkWord() {
+                if (this.selectedCells.length < 2) return;
+                
+                const word = this.selectedCells.map(cell => cell.textContent).join('');
+                const reverseWord = word.split('').reverse().join('');
+                
+                const foundElement = this.elements.find(element => 
+                    (element.name === word || element.name === reverseWord) && 
+                    !this.foundElements.has(element.name)
+                );
+                
+                if (foundElement) {
+                    this.correctAttempts++;
+                    this.foundElements.add(foundElement.name);
+                    
+                    // Animación de encontrado
+                    this.selectedCells.forEach((cell, index) => {
+                        setTimeout(() => {
+                            cell.classList.add('found');
+                            cell.classList.remove('selected');
+                        }, index * 50);
+                    });
+                    
+                    // Calcular puntuación
+                    let baseScore = foundElement.name.length * 10;
+                    let timeBonus = 0;
+                    if (this.timeLimit > 0) {
+                        const remaining = this.timeLimit - this.elapsedTime;
+                        timeBonus = Math.max(0, Math.floor(remaining / 10));
+                    }
+                    let totalScore = Math.floor((baseScore + timeBonus) * this.scoreMultiplier);
+                    
+                    this.score += totalScore;
+                    document.getElementById('score').textContent = this.score;
+                    
+                    // Marcar elemento como encontrado en la lista
+                    const elementItem = document.querySelector(`[data-element-name="${foundElement.name}"]`);
+                    if (elementItem) {
+                        elementItem.classList.add('found');
+                    }
+                    
+                    // Reproducir sonido de éxito (simulado con vibración en móviles)
+                    if (navigator.vibrate) {
+                        navigator.vibrate([100, 50, 100]);
+                    }
+                    
+                    if (this.foundElements.size === this.elements.length) {
+                        this.endGame('¡Perfecto! ¡Juego completado!', true);
+                    }
+                }
+            }
+
+            startTimer() {
+                document.getElementById('timer').textContent = '0:00';
+                this.timer = setInterval(() => {
+                    if (this.gamePaused) return;
+                    
+                    this.elapsedTime++;
+                    
+                    const minutes = Math.floor(this.elapsedTime / 60);
+                    const seconds = this.elapsedTime % 60;
+                    
+                    const timerElement = document.getElementById('timer');
+                    timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    // Cambiar color cuando queda poco tiempo
+                    if (this.timeLimit > 0) {
+                        const remaining = this.timeLimit - this.elapsedTime;
+                        if (remaining <= 30) {
+                            timerElement.style.color = '#e53e3e';
+                            timerElement.style.animation = 'pulse 1s ease-in-out infinite';
+                        } else if (remaining <= 60) {
+                            timerElement.style.color = '#ed8936';
+                        } else {
+                            timerElement.style.color = '#e53e3e';
+                        }
+                        if (this.elapsedTime >= this.timeLimit) {
+                            this.endGame('⏰ ¡Tiempo agotado!', false);
+                        }
+                    }
+                }, 1000);
+            }
+
+            calculateStats() {
+                const totalTimeSeconds = this.elapsedTime;
+                const totalTimeMinutes = totalTimeSeconds / 60;
+                
+                const accuracy = this.attempts > 0 ? Math.round((this.correctAttempts / this.attempts) * 100) : 100;
+                const speed = totalTimeMinutes > 0 ? Math.round(this.foundElements.size / totalTimeMinutes) : 0;
+                
+                return {
+                    totalTime: this.formatTime(totalTimeSeconds),
+                    accuracy,
+                    speed
+                };
+            }
+
+            formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            endGame(message, levelCompleted = false) {
+                this.gameStarted = false;
+                if (this.timer) {
+                    clearInterval(this.timer);
+                }
+                
+                const stats = this.calculateStats();
+                
+                // Actualizar estadísticas en el panel
+                document.getElementById('totalTime').textContent = stats.totalTime;
+                document.getElementById('accuracy').textContent = `${stats.accuracy}%`;
+                document.getElementById('speed').textContent = `${stats.speed}/min`;
+                document.getElementById('statsPanel').style.display = 'block';
+                
+                // Modal de fin de juego
+                document.getElementById('gameOverTitle').textContent = message;
+                document.getElementById('finalScore').textContent = `Puntuación: ${this.score}`;
+                
+                const gameOverStats = document.getElementById('gameOverStats');
+                gameOverStats.innerHTML = `
+                    <div>🎯 Precisión: ${stats.accuracy}%</div>
+                    <div>⚡ Velocidad: ${stats.speed} elementos/min</div>
+                    <div>📊 Elementos encontrados: ${this.foundElements.size}/${this.elements.length}</div>
+                `;
+                
+                document.getElementById('gameOver').style.display = 'flex';
+                
+            }
+        }
+
+        // Inicializar el juego cuando se carga la página
+        window.addEventListener('DOMContentLoaded', () => {
+            new ChemicalWordSearchPro();
+        });
+
+        // Prevenir zoom en dispositivos móviles al hacer doble tap
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
