@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sopa de Letras - Elementos Químicos Pro</title>
+    <title>Sopa de Letras - Elementos Quimicos</title>
     <style>
         * {
             margin: 0;
@@ -150,6 +150,7 @@
             border-radius: 8px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
             border: 1px solid #e0e0e0;
+            max-width: max-content;
         }
 
         .word-grid {
@@ -192,6 +193,13 @@
             color: white;
             border-color: #16a34a;
             box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+            animation: foundPulse 0.5s ease-in-out;
+        }
+
+        @keyframes foundPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         .elements-panel {
@@ -231,8 +239,22 @@
 
         .element-item.found {
             background: #dcfce7;
-            text-decoration: line-through;
             opacity: 0.85;
+        }
+
+        .element-item.found .element-display {
+            text-decoration: line-through;
+        }
+
+        .element-name {
+            margin-left: 10px;
+            color: #374151;
+            font-weight: 500;
+            display: none;
+        }
+
+        .element-item.found .element-name {
+            display: inline;
         }
 
         .element-display {
@@ -299,6 +321,18 @@
             max-width: 500px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             border: 1px solid #e0e0e0;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .game-over h2 {
@@ -354,23 +388,22 @@
 <body>
     
     <div class="container">
-        <h1>🧪 Sopa de Letras - Elementos Químicos Pro 🧪</h1>
+        <h1>Sopa de Letras - Elementos Quimicos</h1>
         
         <div class="game-controls">
             <div class="control-group">
                 <label for="difficulty">Dificultad:</label>
                 <select id="difficulty">
-                    <option value="easy">🟢 Fácil</option>
-                    <option value="medium">🟡 Medio</option>
-                    <option value="hard">🔴 Difícil</option>
-                    <option value="expert">⚫ Experto</option>
+                    <option value="easy">Facil</option>
+                    <option value="medium">Medio</option>
+                    <option value="hard">Dificil</option>
+                    <option value="expert">Experto</option>
                 </select>
             </div>
             
             <div class="control-group">
                 <label for="gridSize">Tamaño:</label>
                 <select id="gridSize">
-                    <option value="8">8x8</option>
                     <option value="10">10x10</option>
                     <option value="12">12x12</option>
                     <option value="15">15x15</option>
@@ -380,22 +413,22 @@
             </div>
             
             <div class="control-group">
-                <button id="startGame">🎮 Nuevo Juego</button>
+                <button id="startGame">Nuevo Juego</button>
             </div>
             
             <div class="control-group">
-                <button id="pauseGame">⏸️ Pausar</button>
+                <button id="pauseGame">Pausar</button>
             </div>
         </div>
 
         <div class="game-info">
             <div class="info-card">
-                <h3>⏱️ Tiempo</h3>
+                <h3>Tiempo</h3>
                 <div id="timer" class="info-value timer">0:00</div>
             </div>
             
             <div class="info-card">
-                <h3>🏆 Puntuación</h3>
+                <h3>Puntuacion</h3>
                 <div id="score" class="info-value score">0</div>
             </div>
             
@@ -407,20 +440,20 @@
             </div>
             
             <div class="elements-panel">
-                <div class="elements-title">🎯 Elementos a encontrar (Números Atómicos):</div>
+                <div class="elements-title">Números Atomicos a Encontrar:</div>
                 <div id="elementsList"></div>
             </div>
         </div>
         
         <div class="stats-panel" id="statsPanel" style="display: none;">
-            <div class="stats-title">📈 Estadísticas de la Partida</div>
+            <div class="stats-title">Estadisticas de la Partida</div>
             <div class="stats-grid">
                 <div class="stat-item">
                     <div style="font-weight: bold; color: #2d5016;">Tiempo Total</div>
                     <div id="totalTime">0:00</div>
                 </div>
                 <div class="stat-item">
-                    <div style="font-weight: bold; color: #2d5016;">Precisión</div>
+                    <div style="font-weight: bold; color: #2d5016;">Precision</div>
                     <div id="accuracy">100%</div>
                 </div>
                 <div class="stat-item">
@@ -433,12 +466,12 @@
 
     <div id="gameOver" class="game-over">
         <div class="game-over-content">
-            <h2 id="gameOverTitle">🎉 ¡Felicidades!</h2>
+            <h2 id="gameOverTitle">Felicidades!</h2>
             <div class="final-stats">
-                <div id="finalScore" style="font-size: 2em; color: #38a169; margin-bottom: 10px;">Puntuación: 0</div>
+                <div id="finalScore" style="font-size: 2em; color: #38a169; margin-bottom: 10px;">Puntuacion: 0</div>
                 <div id="gameOverStats" style="color: #4a5568;"></div>
             </div>
-            <button id="playAgain">🎮 Jugar de Nuevo</button>
+            <button id="playAgain">Jugar de Nuevo</button>
         </div>
     </div>
 
@@ -536,7 +569,7 @@
                 
                 document.getElementById('score').textContent = this.score;
                 document.getElementById('gameOver').style.display = 'none';
-                document.getElementById('pauseGame').textContent = '⏸️ Pausar';
+                document.getElementById('pauseGame').textContent = 'Pausar';
             }
 
             setupGame(difficulty, gridSize) {
@@ -570,6 +603,9 @@
                 const shuffled = [...this.chemicalElements].sort(() => 0.5 - Math.random());
                 this.elements = shuffled.slice(0, Math.min(elementCount, this.chemicalElements.length));
                 
+                // Ordenar por longitud de nombre descendente para colocar palabras largas primero
+                this.elements.sort((a, b) => b.name.length - a.name.length);
+                
                 this.grid = Array(gridSize).fill().map(() => Array(gridSize).fill(''));
                 this.placeWords();
                 this.fillEmptyCells();
@@ -591,7 +627,7 @@
                     let placed = false;
                     let attempts = 0;
                     
-                    while (!placed && attempts < 150) {
+                    while (!placed && attempts < 500) {  // Aumentado el número de intentos
                         const direction = directions[Math.floor(Math.random() * directions.length)];
                         const startRow = Math.floor(Math.random() * this.gridSize);
                         const startCol = Math.floor(Math.random() * this.gridSize);
@@ -608,6 +644,9 @@
                             placed = true;
                         }
                         attempts++;
+                    }
+                    if (!placed) {
+                        console.warn(`No se pudo colocar la palabra: ${element.name}`);
                     }
                 });
             }
@@ -719,7 +758,7 @@
                     }
                     
                     elementDiv.innerHTML = `
-                        <div class="element-display">${displayValue}</div>
+                        <div class="element-display">${displayValue}</div><span class="element-name">${element.name}</span>
                     `;
                     elementDiv.dataset.elementName = element.name;
                     elementsList.appendChild(elementDiv);
@@ -733,12 +772,12 @@
                 const pauseBtn = document.getElementById('pauseGame');
                 
                 if (this.gamePaused) {
-                    pauseBtn.textContent = '▶️ Reanudar';
+                    pauseBtn.textContent = 'Reanudar';
                     if (this.timer) {
                         clearInterval(this.timer);
                     }
                 } else {
-                    pauseBtn.textContent = '⏸️ Pausar';
+                    pauseBtn.textContent = 'Pausar';
                     this.startTimer();
                 }
             }
@@ -865,7 +904,7 @@
                     }
                     
                     if (this.foundElements.size === this.elements.length) {
-                        this.endGame('¡Perfecto! ¡Juego completado!', true);
+                        this.endGame('Perfecto! Juego completado', true);
                     }
                 }
             }
@@ -895,7 +934,7 @@
                             timerElement.style.color = '#e53e3e';
                         }
                         if (this.elapsedTime >= this.timeLimit) {
-                            this.endGame('⏰ ¡Tiempo agotado!', false);
+                            this.endGame('Tiempo agotado!', false);
                         }
                     }
                 }, 1000);
@@ -937,13 +976,13 @@
                 
                 // Modal de fin de juego
                 document.getElementById('gameOverTitle').textContent = message;
-                document.getElementById('finalScore').textContent = `Puntuación: ${this.score}`;
+                document.getElementById('finalScore').textContent = `Puntuacion: ${this.score}`;
                 
                 const gameOverStats = document.getElementById('gameOverStats');
                 gameOverStats.innerHTML = `
-                    <div>🎯 Precisión: ${stats.accuracy}%</div>
-                    <div>⚡ Velocidad: ${stats.speed} elementos/min</div>
-                    <div>📊 Elementos encontrados: ${this.foundElements.size}/${this.elements.length}</div>
+                    <div>Precision: ${stats.accuracy}%</div>
+                    <div>Velocidad: ${stats.speed} elementos/min</div>
+                    <div>Elementos encontrados: ${this.foundElements.size}/${this.elements.length}</div>
                 `;
                 
                 document.getElementById('gameOver').style.display = 'flex';
