@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sopa de Letras - Elementos Quimicos</title>
+    <title>Sopa de Letras - Elementos Químicos</title>
     <style>
         * {
             margin: 0;
@@ -11,28 +11,65 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-color: #f4f7fa;
+            --container-bg: white;
+            --text-color: #333;
+            --control-bg: #fafafa;
+            --border-color: #e0e0e0;
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --primary-active: #1d4ed8;
+            --timer-color: #ef4444;
+            --score-color: #22c55e;
+            --found-bg: #dcfce7;
+            --element-bg: #f9fafb;
+            --element-border: #e5e7eb;
+            --stats-bg: #fafafa;
+        }
+
+        body.dark-mode {
+            --bg-color: #1a202c;
+            --container-bg: #2d3748;
+            --text-color: #e2e8f0;
+            --control-bg: #4a5568;
+            --border-color: #4a5568;
+            --primary-color: #63b3ed;
+            --primary-hover: #4299e1;
+            --primary-active: #3182ce;
+            --timer-color: #fc8181;
+            --score-color: #68d391;
+            --found-bg: #276749;
+            --element-bg: #2d3748;
+            --element-border: #4a5568;
+            --stats-bg: #4a5568;
+        }
+
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
-            background: #f4f7fa;
+            background: var(--bg-color);
             min-height: 100vh;
             padding: 20px;
-            color: #333;
+            color: var(--text-color);
             overflow-x: auto;
+            transition: background 0.3s, color 0.3s;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
+            background: var(--container-bg);
             border-radius: 12px;
             padding: 30px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
+            transition: background 0.3s, border-color 0.3s;
+            position: relative;
         }
 
         h1 {
             text-align: center;
-            color: #2c3e50;
+            color: var(--text-color);
             margin-bottom: 30px;
             font-size: 2.2em;
             font-weight: 600;
@@ -44,10 +81,11 @@
             gap: 20px;
             margin-bottom: 30px;
             padding: 20px;
-            background: #fafafa;
+            background: var(--control-bg);
             border-radius: 8px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
             justify-content: center;
+            transition: background 0.3s, border-color 0.3s;
         }
 
         .control-group {
@@ -66,25 +104,30 @@
             letter-spacing: 0.5px;
         }
 
+        body.dark-mode label {
+            color: #a0aec0;
+        }
+
         select, button {
             padding: 10px 14px;
-            border: 1px solid #d1d5db;
+            border: 1px solid var(--border-color);
             border-radius: 6px;
             font-size: 14px;
-            background: white;
+            background: var(--container-bg);
+            color: var(--text-color);
             width: 100%;
             cursor: pointer;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.3s, color 0.3s;
         }
 
         select:focus, button:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         button {
-            background: #3b82f6;
+            background: var(--primary-color);
             color: white;
             border: none;
             font-weight: 600;
@@ -92,11 +135,11 @@
         }
 
         button:hover {
-            background: #2563eb;
+            background: var(--primary-hover);
         }
 
         button:active {
-            background: #1d4ed8;
+            background: var(--primary-active);
         }
 
         .game-info {
@@ -108,14 +151,14 @@
         }
 
         .info-card {
-            background: white;
+            background: var(--container-bg);
             padding: 15px 25px;
             border-radius: 8px;
             text-align: center;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
             min-width: 140px;
-            transition: transform 0.2s;
+            transition: transform 0.2s, background 0.3s, border-color 0.3s;
         }
 
         .info-card:hover {
@@ -129,13 +172,17 @@
             font-weight: 500;
         }
 
+        body.dark-mode .info-card h3 {
+            color: #a0aec0;
+        }
+
         .info-value {
             font-size: 1.6em;
             font-weight: 700;
         }
 
-        .timer { color: #ef4444; }
-        .score { color: #22c55e; }
+        .timer { color: var(--timer-color); }
+        .score { color: var(--score-color); }
 
         .game-area {
             display: flex;
@@ -145,12 +192,13 @@
         }
 
         .grid-container {
-            background: white;
+            background: var(--container-bg);
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
             max-width: max-content;
+            transition: background 0.3s, border-color 0.3s;
         }
 
         .word-grid {
@@ -162,17 +210,18 @@
         .cell {
             width: 36px;
             height: 36px;
-            border: 1px solid #d1d5db;
+            border: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
             font-size: 16px;
-            background: white;
+            background: var(--container-bg);
+            color: var(--text-color);
             cursor: pointer;
             user-select: none;
             border-radius: 4px;
-            transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+            transition: background 0.2s, transform 0.1s, box-shadow 0.2s, color 0.3s, border-color 0.3s;
         }
 
         .cell:hover {
@@ -181,15 +230,19 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
+        body.dark-mode .cell:hover {
+            background: #4a5568;
+        }
+
         .cell.selected {
-            background: #3b82f6;
+            background: var(--primary-color);
             color: white;
-            border-color: #2563eb;
+            border-color: var(--primary-hover);
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
 
         .cell.found {
-            background: #22c55e;
+            background: var(--score-color);
             color: white;
             border-color: #16a34a;
             box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
@@ -203,13 +256,14 @@
         }
 
         .elements-panel {
-            background: white;
+            background: var(--container-bg);
             padding: 20px;
             border-radius: 8px;
             max-width: 350px;
             min-width: 300px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
+            transition: background 0.3s, border-color 0.3s;
         }
 
         .elements-title {
@@ -220,15 +274,19 @@
             font-weight: 600;
         }
 
+        body.dark-mode .elements-title {
+            color: #a0aec0;
+        }
+
         .element-item {
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 12px;
             margin-bottom: 12px;
-            background: #f9fafb;
+            background: var(--element-bg);
             border-radius: 6px;
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--element-border);
             transition: background 0.2s, box-shadow 0.2s;
         }
 
@@ -237,8 +295,12 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
+        body.dark-mode .element-item:hover {
+            background: #4a5568;
+        }
+
         .element-item.found {
-            background: #dcfce7;
+            background: var(--found-bg);
             opacity: 0.85;
         }
 
@@ -253,12 +315,16 @@
             display: none;
         }
 
+        body.dark-mode .element-name {
+            color: #e2e8f0;
+        }
+
         .element-item.found .element-name {
             display: inline;
         }
 
         .element-display {
-            background: #3b82f6;
+            background: var(--primary-color);
             color: white;
             padding: 10px 16px;
             border-radius: 6px;
@@ -272,9 +338,10 @@
         .stats-panel {
             margin-top: 30px;
             padding: 20px;
-            background: #fafafa;
+            background: var(--stats-bg);
             border-radius: 8px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
+            transition: background 0.3s, border-color 0.3s;
         }
 
         .stats-title {
@@ -283,6 +350,10 @@
             color: #374151;
             font-weight: 600;
             font-size: 1.1em;
+        }
+
+        body.dark-mode .stats-title {
+            color: #e2e8f0;
         }
 
         .stats-grid {
@@ -294,10 +365,15 @@
         .stat-item {
             text-align: center;
             padding: 12px;
-            background: white;
+            background: var(--container-bg);
             border-radius: 6px;
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--border-color);
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        body.dark-mode .stat-item div[style] {
+            color: #a0aec0 !important;
         }
 
         .game-over {
@@ -314,14 +390,15 @@
         }
 
         .game-over-content {
-            background: white;
+            background: var(--container-bg);
             padding: 40px;
             border-radius: 12px;
             text-align: center;
             max-width: 500px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
             animation: modalFadeIn 0.3s ease-out;
+            transition: background 0.3s, border-color 0.3s;
         }
 
         @keyframes modalFadeIn {
@@ -336,7 +413,7 @@
         }
 
         .game-over h2 {
-            color: #2c3e50;
+            color: var(--text-color);
             margin-bottom: 20px;
             font-size: 2.2em;
             font-weight: 600;
@@ -345,9 +422,38 @@
         .final-stats {
             margin: 20px 0;
             padding: 20px;
-            background: #fafafa;
+            background: var(--stats-bg);
             border-radius: 8px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--border-color);
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        body.dark-mode .final-stats div[style] {
+            color: #e2e8f0 !important;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--control-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, border-color 0.3s, color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-hover);
         }
 
         @media (max-width: 768px) {
@@ -388,15 +494,16 @@
 <body>
     
     <div class="container">
-        <h1>Sopa de Letras - Elementos Quimicos</h1>
+        <button id="themeToggle" class="theme-toggle">☀️</button>
+        <h1>Sopa de Letras - Elementos Químicos</h1>
         
         <div class="game-controls">
             <div class="control-group">
                 <label for="difficulty">Dificultad:</label>
                 <select id="difficulty">
-                    <option value="easy">Facil</option>
+                    <option value="easy">Fácil</option>
                     <option value="medium">Medio</option>
-                    <option value="hard">Dificil</option>
+                    <option value="hard">Difícil</option>
                     <option value="expert">Experto</option>
                 </select>
             </div>
@@ -428,7 +535,7 @@
             </div>
             
             <div class="info-card">
-                <h3>Puntuacion</h3>
+                <h3>Puntuación</h3>
                 <div id="score" class="info-value score">0</div>
             </div>
             
@@ -440,20 +547,20 @@
             </div>
             
             <div class="elements-panel">
-                <div class="elements-title">Números Atomicos a Encontrar:</div>
+                <div class="elements-title">Números Atómicos a Encontrar:</div>
                 <div id="elementsList"></div>
             </div>
         </div>
         
         <div class="stats-panel" id="statsPanel" style="display: none;">
-            <div class="stats-title">Estadisticas de la Partida</div>
+            <div class="stats-title">Estadísticas de la Partida</div>
             <div class="stats-grid">
                 <div class="stat-item">
                     <div style="font-weight: bold; color: #2d5016;">Tiempo Total</div>
                     <div id="totalTime">0:00</div>
                 </div>
                 <div class="stat-item">
-                    <div style="font-weight: bold; color: #2d5016;">Precision</div>
+                    <div style="font-weight: bold; color: #2d5016;">Precisión</div>
                     <div id="accuracy">100%</div>
                 </div>
                 <div class="stat-item">
@@ -466,9 +573,9 @@
 
     <div id="gameOver" class="game-over">
         <div class="game-over-content">
-            <h2 id="gameOverTitle">Felicidades!</h2>
+            <h2 id="gameOverTitle">¡Felicidades!</h2>
             <div class="final-stats">
-                <div id="finalScore" style="font-size: 2em; color: #38a169; margin-bottom: 10px;">Puntuacion: 0</div>
+                <div id="finalScore" style="font-size: 2em; color: #38a169; margin-bottom: 10px;">Puntuación: 0</div>
                 <div id="gameOverStats" style="color: #4a5568;"></div>
             </div>
             <button id="playAgain">Jugar de Nuevo</button>
@@ -538,6 +645,18 @@
                     document.getElementById('gameOver').style.display = 'none';
                     this.startNewGame();
                 });
+                document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
+                this.updateThemeIcon();  // Set initial icon
+            }
+
+            toggleTheme() {
+                document.body.classList.toggle('dark-mode');
+                this.updateThemeIcon();
+            }
+
+            updateThemeIcon() {
+                const themeToggle = document.getElementById('themeToggle');
+                themeToggle.textContent = document.body.classList.contains('dark-mode') ? '🌙' : '☀️';
             }
 
             startNewGame() {
